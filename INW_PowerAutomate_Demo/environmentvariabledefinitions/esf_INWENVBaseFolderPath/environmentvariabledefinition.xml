@@ -1,0 +1,14 @@
+<environmentvariabledefinition schemaname="esf_INWENVBaseFolderPath">
+  <defaultvalue>/1_InwayDemo/</defaultvalue>
+  <description default="Specifies the base folder path">
+    <label description="Specifies the base folder path" languagecode="1031" />
+  </description>
+  <displayname default="[INW][ENV] BaseFolderPath">
+    <label description="[INW][ENV] BaseFolderPath" languagecode="1031" />
+  </displayname>
+  <introducedversion>0.0.0.1</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

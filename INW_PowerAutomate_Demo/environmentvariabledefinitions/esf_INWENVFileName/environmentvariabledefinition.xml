@@ -1,0 +1,14 @@
+<environmentvariabledefinition schemaname="esf_INWENVFileName">
+  <defaultvalue>Schubshistorie.xlsx</defaultvalue>
+  <description default="Specifies the target file name">
+    <label description="Specifies the target file name" languagecode="1031" />
+  </description>
+  <displayname default="[INW][ENV] FileName">
+    <label description="[INW][ENV] FileName" languagecode="1031" />
+  </displayname>
+  <introducedversion>0.0.0.1</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

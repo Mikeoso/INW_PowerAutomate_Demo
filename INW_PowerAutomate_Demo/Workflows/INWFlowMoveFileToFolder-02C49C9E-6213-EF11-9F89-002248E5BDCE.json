@@ -1,0 +1,174 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_onedrive": {
+        "runtimeSource": "invoker",
+        "connection": {
+          "connectionReferenceLogicalName": "esf_INWCONOneDrive"
+        },
+        "api": {
+          "name": "shared_onedrive"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "[INW][ENV] SystemType (esf_INWENVSystemType)": {
+          "defaultValue": "DEV",
+          "type": "String",
+          "metadata": {
+            "schemaName": "esf_INWENVSystemType",
+            "description": "Defines the specified system type"
+          }
+        },
+        "[INW][ENV] BaseFolderPath (esf_INWENVBaseFolderPath)": {
+          "defaultValue": "/1_InwayDemo/",
+          "type": "String",
+          "metadata": {
+            "schemaName": "esf_INWENVBaseFolderPath",
+            "description": "Specifies the base folder path"
+          }
+        },
+        "[INW][ENV] FileName (esf_INWENVFileName)": {
+          "defaultValue": "Schubshistorie.xlsx",
+          "type": "String",
+          "metadata": {
+            "schemaName": "esf_INWENVFileName",
+            "description": "Specifies the target file name"
+          }
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "c655de31-83c3-4ec2-957f-012f2042926b"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        }
+      },
+      "actions": {
+        "Initialize_BaseFolderPath": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "cfba6b5c-6c39-4710-a143-e6981328aaf0"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "TargetFilePath",
+                "type": "string",
+                "value": "@{concat('/', replace(parameters('[INW][ENV] BaseFolderPath (esf_INWENVBaseFolderPath)'), '/', ''))}"
+              }
+            ]
+          }
+        },
+        "Initialize_SystemType": {
+          "runAfter": {
+            "Initialize_BaseFolderPath": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "8f3ce647-4b8d-4dcc-8aa2-c1ff1076c92b"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "SystemType",
+                "type": "string",
+                "value": "@parameters('[INW][ENV] SystemType (esf_INWENVSystemType)')"
+              }
+            ]
+          }
+        },
+        "Initialize_Sub_Folder_ID": {
+          "runAfter": {
+            "Initialize_SystemType": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "cae240f4-d406-4827-bade-29cd8b7b7e8f"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "SubFolderID",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Initialize_Current_File_Id": {
+          "runAfter": {
+            "Initialize_Sub_Folder_ID": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d8c43829-6c35-4f94-8107-56b314094127"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "CurrentFileId",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Move_or_rename_a_file_using_path": {
+          "runAfter": {
+            "Initialize_Current_File_Id": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "cdc31f30-8bc2-465e-ab78-b0872e263d83"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_onedrive",
+              "operationId": "MoveFileByPath",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedrive"
+            },
+            "parameters": {
+              "source": "@concat(parameters('[INW][ENV] BaseFolderPath (esf_INWENVBaseFolderPath)'), parameters('[INW][ENV] FileName (esf_INWENVFileName)'))",
+              "destination": "@concat(parameters('[INW][ENV] BaseFolderPath (esf_INWENVBaseFolderPath)'), parameters('[INW][ENV] SystemType (esf_INWENVSystemType)'), '/', parameters('[INW][ENV] FileName (esf_INWENVFileName)'))",
+              "overwrite": true
+            },
+            "authentication": {
+              "type": "Raw",
+              "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+            }
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}
